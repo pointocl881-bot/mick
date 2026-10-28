@@ -1,6 +1,6 @@
 local CONFIG = {
-    ScriptUrl = "https://raw.githubusercontent.com/pointoc1881-bot/mick/main/main.lua",
-    VersionUrl = "https://raw.githubusercontent.com/pointoc1881-bot/mick/main/version.txt",
+    ScriptUrl = "https://raw.githubusercontent.com/pointocl881-bot/mick/main/main.lua",
+    VersionUrl = "https://raw.githubusercontent.com/pointocl881-bot/mick/main/version.txt",
     CacheFile = "tg_mick_cache.lua",
     VersionFile = "tg_mick_version.txt",
     NotifyOnUpdate = true,
