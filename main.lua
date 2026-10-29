@@ -1201,3 +1201,369 @@ updateLanguage = function()
         LineColorLbl.Text = "Line Color"
     end
 end
+-- ===== PART 5: แถบ 📄 (Map Hub) + ℹ️ (Info) + ⚙️ (Settings) =====
+
+-- 1. สร้างปุ่มเมนูสำหรับ 3 แท็บใหม่
+local DocTabBtn, DocTabStroke = createNavBtn("📄", 130)
+local InfoTabBtn, InfoTabStroke = createNavBtn("ℹ️", 170)
+local SettingTabBtn, SettingTabStroke = createNavBtn("⚙️", 210)
+
+-- 2. สร้าง Page สำหรับ 3 แท็บใหม่
+local DocPage = Instance.new("Frame")
+DocPage.Size = UDim2.new(1, 0, 1, 0)
+DocPage.BackgroundTransparency = 1
+DocPage.Visible = false
+DocPage.Parent = PagesContainer
+
+local InfoPage = Instance.new("Frame")
+InfoPage.Size = UDim2.new(1, 0, 1, 0)
+InfoPage.BackgroundTransparency = 1
+InfoPage.Visible = false
+InfoPage.Parent = PagesContainer
+
+local SettingPage = Instance.new("Frame")
+SettingPage.Size = UDim2.new(1, 0, 1, 0)
+SettingPage.BackgroundTransparency = 1
+SettingPage.Visible = false
+SettingPage.Parent = PagesContainer
+
+-- 3. ระบบสลับหน้า 5 แท็บ (แก้ทับของเก่า)
+local function ResetAllTabs()
+    local allTabs = {
+        {Btn = BtnHome, Stroke = HomeStroke, Page = HomePage},
+        {Btn = ESPTabBtn, Stroke = ESPTabStroke, Page = ESPPage},
+        {Btn = DocTabBtn, Stroke = DocTabStroke, Page = DocPage},
+        {Btn = InfoTabBtn, Stroke = InfoTabStroke, Page = InfoPage},
+        {Btn = SettingTabBtn, Stroke = SettingTabStroke, Page = SettingPage}
+    }
+    for _, tab in ipairs(allTabs) do
+        tab.Page.Visible = false
+        tab.Btn.BackgroundColor3 = Color3.fromRGB(30, 35, 45)
+        tab.Btn.TextColor3 = TextGray
+        tab.Stroke.Color = Color3.fromRGB(50, 55, 65)
+    end
+end
+
+BtnHome.MouseButton1Click:Connect(function() ResetAllTabs(); HomePage.Visible = true; BtnHome.BackgroundColor3 = PrimaryColor; BtnHome.TextColor3 = Color3.fromRGB(0,0,0); HomeStroke.Color = PrimaryColor end)
+ESPTabBtn.MouseButton1Click:Connect(function() ResetAllTabs(); ESPPage.Visible = true; ESPTabBtn.BackgroundColor3 = PrimaryColor; ESPTabBtn.TextColor3 = Color3.fromRGB(0,0,0); ESPTabStroke.Color = PrimaryColor end)
+DocTabBtn.MouseButton1Click:Connect(function() ResetAllTabs(); DocPage.Visible = true; DocTabBtn.BackgroundColor3 = PrimaryColor; DocTabBtn.TextColor3 = Color3.fromRGB(0,0,0); DocTabStroke.Color = PrimaryColor end)
+InfoTabBtn.MouseButton1Click:Connect(function() ResetAllTabs(); InfoPage.Visible = true; InfoTabBtn.BackgroundColor3 = PrimaryColor; InfoTabBtn.TextColor3 = Color3.fromRGB(0,0,0); InfoTabStroke.Color = PrimaryColor end)
+SettingTabBtn.MouseButton1Click:Connect(function() ResetAllTabs(); SettingPage.Visible = true; SettingTabBtn.BackgroundColor3 = PrimaryColor; SettingTabBtn.TextColor3 = Color3.fromRGB(0,0,0); SettingTabStroke.Color = PrimaryColor end)
+
+-- ==========================================
+-- ===== [ แถบ 📄 : Map Hub ] =====
+-- ==========================================
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 26)
+TopBar.BackgroundTransparency = 1
+TopBar.Parent = DocPage
+
+local MapDropdownBtn = Instance.new("TextButton")
+MapDropdownBtn.Size = UDim2.new(0.5, -4, 1, 0)
+MapDropdownBtn.BackgroundColor3 = FeatureBoxBg
+MapDropdownBtn.Text = "เลือก Map ▼"
+MapDropdownBtn.TextColor3 = TextWhite
+MapDropdownBtn.TextSize = 11
+MapDropdownBtn.Font = Enum.Font.GothamBold
+MapDropdownBtn.Parent = TopBar
+local mapDdCorner = Instance.new("UICorner") mapDdCorner.CornerRadius = UDim.new(0, 5) mapDdCorner.Parent = MapDropdownBtn
+
+local ContactBtn = Instance.new("TextButton")
+ContactBtn.Size = UDim2.new(0.5, -4, 1, 0)
+ContactBtn.Position = UDim2.new(0.5, 4, 0, 0)
+ContactBtn.BackgroundColor3 = PrimaryColor
+ContactBtn.Text = "ช่องทางติดต่อ"
+ContactBtn.TextColor3 = Color3.fromRGB(0,0,0)
+ContactBtn.TextSize = 11
+ContactBtn.Font = Enum.Font.GothamBold
+ContactBtn.Parent = TopBar
+local contactCorner = Instance.new("UICorner") contactCorner.CornerRadius = UDim.new(0, 5) contactCorner.Parent = ContactBtn
+
+local MapList = Instance.new("ScrollingFrame")
+MapList.Size = UDim2.new(0.5, -4, 0, 80)
+MapList.Position = UDim2.new(0, 0, 0, 28)
+MapList.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
+MapList.BorderSizePixel = 1
+MapList.BorderColor3 = PrimaryColor
+MapList.Visible = false
+MapList.ZIndex = 60
+MapList.Parent = DocPage
+local mapListCorner = Instance.new("UICorner") mapListCorner.CornerRadius = UDim.new(0, 5) mapListCorner.Parent = MapList
+local mapListLayout = Instance.new("UIListLayout") mapListLayout.Parent = MapList
+
+local ScriptListPanel = Instance.new("ScrollingFrame")
+ScriptListPanel.Size = UDim2.new(1, 0, 1, -32)
+ScriptListPanel.Position = UDim2.new(0, 0, 0, 32)
+ScriptListPanel.BackgroundColor3 = PanelBg
+ScriptListPanel.BorderSizePixel = 0
+ScriptListPanel.ScrollBarThickness = 2
+ScriptListPanel.ScrollBarImageColor3 = PrimaryColor
+ScriptListPanel.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScriptListPanel.Parent = DocPage
+local slpCorner = Instance.new("UICorner") slpCorner.CornerRadius = UDim.new(0, 8) slpCorner.Parent = ScriptListPanel
+local slpLayout = Instance.new("UIListLayout") slpLayout.Padding = UDim.new(0, 4) slpLayout.Parent = ScriptListPanel
+
+local function AddScriptButton(title, scriptUrl, hasKey, imageId)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -12, 0, 50)
+    btn.BackgroundColor3 = FeatureBoxBg
+    btn.Text = ""
+    btn.Parent = ScriptListPanel
+    local btnCorner = Instance.new("UICorner") btnCorner.CornerRadius = UDim.new(0, 6) btnCorner.Parent = btn
+    local btnStroke = Instance.new("UIStroke") btnStroke.Color = Color3.fromRGB(45, 50, 60) btnStroke.Parent = btn
+
+    local img = Instance.new("ImageLabel")
+    img.Size = UDim2.new(0, 36, 0, 36)
+    img.Position = UDim2.new(0, 6, 0.5, -18)
+    img.BackgroundColor3 = Color3.fromRGB(15, 17, 21)
+    if imageId and imageId ~= "" then img.Image = "rbxassetid://" .. imageId end
+    img.ScaleType = Enum.ScaleType.Crop
+    img.Parent = btn
+    local imgCorner = Instance.new("UICorner") imgCorner.CornerRadius = UDim.new(0, 4) imgCorner.Parent = img
+
+    local nameLbl = Instance.new("TextLabel")
+    nameLbl.Size = UDim2.new(0.6, 0, 0, 18)
+    nameLbl.Position = UDim2.new(0, 50, 0, 8)
+    nameLbl.BackgroundTransparency = 1
+    nameLbl.Text = title
+    nameLbl.TextColor3 = TextWhite
+    nameLbl.TextSize = 12
+    nameLbl.Font = Enum.Font.GothamBold
+    nameLbl.TextXAlignment = Enum.TextXAlignment.Left
+    nameLbl.Parent = btn
+
+    local creditLbl = Instance.new("TextLabel")
+    creditLbl.Size = UDim2.new(0.6, 0, 0, 14)
+    creditLbl.Position = UDim2.new(0, 50, 0, 26)
+    creditLbl.BackgroundTransparency = 1
+    creditLbl.Text = "by:mick_2009"
+    creditLbl.TextColor3 = Color3.fromRGB(150, 150, 150)
+    creditLbl.TextSize = 10
+    creditLbl.Font = Enum.Font.Gotham
+    creditLbl.TextXAlignment = Enum.TextXAlignment.Left
+    creditLbl.Parent = btn
+
+    local statusLbl = Instance.new("TextLabel")
+    statusLbl.Size = UDim2.new(0, 60, 0, 20)
+    statusLbl.Position = UDim2.new(1, -68, 0.5, -10)
+    statusLbl.BackgroundColor3 = hasKey and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(46, 204, 113)
+    statusLbl.Text = hasKey and "มีคีย์" or "ไม่มีคีย์"
+    statusLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    statusLbl.TextSize = 10
+    statusLbl.Font = Enum.Font.GothamBold
+    statusLbl.Parent = btn
+    local statusCorner = Instance.new("UICorner") statusCorner.CornerRadius = UDim.new(0, 4) statusCorner.Parent = statusLbl
+
+    btn.MouseButton1Click:Connect(function()
+        game:GetService("StarterGui"):SetCore("SendNotification", { Title = "กำลังโหลด...", Text = "ดึงข้อมูล: " .. title, Duration = 3 })
+        pcall(function() loadstring(game:HttpGet(scriptUrl))() end)
+    end)
+end
+
+local maps = {"FPS MOVE", "Map 2", "Map 3"}
+for _, mapName in ipairs(maps) do
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, 0, 0, 24)
+    btn.BackgroundColor3 = Color3.fromRGB(28, 32, 42)
+    btn.Text = mapName
+    btn.TextColor3 = TextWhite
+    btn.TextSize = 11
+    btn.Font = Enum.Font.GothamBold
+    btn.Parent = MapList
+
+    btn.MouseButton1Click:Connect(function()
+        MapDropdownBtn.Text = mapName .. " ▼"
+        MapList.Visible = false
+        for _, c in ipairs(ScriptListPanel:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
+        if mapName == "FPS MOVE" then
+            AddScriptButton("TG:mick_2009", "https://pastefy.app/LqqHT4gR/raw", true, "131897810457113")
+        end
+        ScriptListPanel.CanvasSize = UDim2.new(0, 0, 0, slpLayout.AbsoluteContentSize.Y)
+    end)
+end
+MapList.CanvasSize = UDim2.new(0, 0, 0, mapListLayout.AbsoluteContentSize.Y)
+
+MapDropdownBtn.MouseButton1Click:Connect(function() MapList.Visible = not MapList.Visible end)
+
+-- Contact Popup
+local ContactPopup = Instance.new("Frame")
+ContactPopup.Size = UDim2.new(0, 220, 0, 100)
+ContactPopup.Position = UDim2.new(0.5, -110, 0.5, -50)
+ContactPopup.BackgroundColor3 = BgDark
+ContactPopup.Visible = false
+ContactPopup.ZIndex = 100
+ContactPopup.Parent = ScreenGui
+local cpCorner = Instance.new("UICorner") cpCorner.CornerRadius = UDim.new(0, 10) cpCorner.Parent = ContactPopup
+local cpStroke = Instance.new("UIStroke") cpStroke.Color = PrimaryColor cpStroke.Thickness = 1.5 cpStroke.Parent = ContactPopup
+
+local CpTitle = Instance.new("TextLabel")
+CpTitle.Size = UDim2.new(1, -30, 0, 30) CpTitle.Position = UDim2.new(0, 15, 0, 10)
+CpTitle.BackgroundTransparency = 1 CpTitle.Text = "ช่องทางติดต่อ" CpTitle.TextColor3 = TextWhite CpTitle.TextSize = 14 CpTitle.Font = Enum.Font.GothamBold CpTitle.TextXAlignment = Enum.TextXAlignment.Left CpTitle.ZIndex = 101 CpTitle.Parent = ContactPopup
+
+local CpCloseBtn = Instance.new("TextButton")
+CpCloseBtn.Size = UDim2.new(0, 24, 0, 24) CpCloseBtn.Position = UDim2.new(1, -30, 0, 8)
+CpCloseBtn.BackgroundColor3 = StatusRed CpCloseBtn.Text = "X" CpCloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CpCloseBtn.TextSize = 12 CpCloseBtn.Font = Enum.Font.GothamBold CpCloseBtn.ZIndex = 101 CpCloseBtn.Parent = ContactPopup
+local cpCloseCorner = Instance.new("UICorner") cpCloseCorner.CornerRadius = UDim.new(0, 6) cpCloseCorner.Parent = CpCloseBtn
+
+local TgBtn = Instance.new("TextButton")
+TgBtn.Size = UDim2.new(1, -30, 0, 35) TgBtn.Position = UDim2.new(0, 15, 0, 50)
+TgBtn.BackgroundColor3 = Color3.fromRGB(0, 136, 204) TgBtn.Text = "Telegram : mick_2009" TgBtn.TextColor3 = Color3.fromRGB(255, 255, 255) TgBtn.TextSize = 12 TgBtn.Font = Enum.Font.GothamBold TgBtn.ZIndex = 101 TgBtn.Parent = ContactPopup
+local tgCorner = Instance.new("UICorner") tgCorner.CornerRadius = UDim.new(0, 6) tgCorner.Parent = TgBtn
+
+ContactBtn.MouseButton1Click:Connect(function() ContactPopup.Visible = true end)
+CpCloseBtn.MouseButton1Click:Connect(function() ContactPopup.Visible = false end)
+TgBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        setclipboard("https://t.me/mick_2009")
+        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "คัดลอกลิงก์แล้ว!", Text = "นำไปวางในเบราว์เซอร์", Duration = 5})
+    end)
+end)
+
+-- ==========================================
+-- ===== [ แถบ ℹ️ : ข้อมูลผู้เล่น ] =====
+-- ==========================================
+local InfoScroll = Instance.new("ScrollingFrame")
+InfoScroll.Size = UDim2.new(1, 0, 1, 0)
+InfoScroll.BackgroundColor3 = PanelBg
+InfoScroll.BorderSizePixel = 0
+InfoScroll.ScrollBarThickness = 2
+InfoScroll.ScrollBarImageColor3 = PrimaryColor
+InfoScroll.CanvasSize = UDim2.new(0, 0, 0, 400)
+InfoScroll.Parent = InfoPage
+local infoCorner = Instance.new("UICorner") infoCorner.CornerRadius = UDim.new(0, 8) infoCorner.Parent = InfoScroll
+local infoLayout = Instance.new("UIListLayout") infoLayout.Padding = UDim.new(0, 4) infoLayout.Parent = InfoScroll
+
+local InfoLabels = {}
+local function createInfoLabel(titleText, valueText)
+    local box = Instance.new("Frame")
+    box.Size = UDim2.new(1, -12, 0, 40)
+    box.BackgroundColor3 = FeatureBoxBg
+    box.Parent = InfoScroll
+    local boxCorner = Instance.new("UICorner") boxCorner.CornerRadius = UDim.new(0, 6) boxCorner.Parent = box
+    local boxStroke = Instance.new("UIStroke") boxStroke.Color = Color3.fromRGB(45, 50, 60) boxStroke.Parent = box
+
+    local titleLbl = Instance.new("TextLabel")
+    titleLbl.Size = UDim2.new(1, -20, 0, 16) titleLbl.Position = UDim2.new(0, 10, 0, 4)
+    titleLbl.BackgroundTransparency = 1 titleLbl.Text = titleText titleLbl.TextColor3 = Color3.fromRGB(150, 150, 150) titleLbl.TextSize = 10 titleLbl.Font = Enum.Font.GothamBold titleLbl.TextXAlignment = Enum.TextXAlignment.Left titleLbl.Parent = box
+
+    local valLbl = Instance.new("TextLabel")
+    valLbl.Size = UDim2.new(1, -20, 0, 16) valLbl.Position = UDim2.new(0, 10, 0, 20)
+    valLbl.BackgroundTransparency = 1 valLbl.Text = valueText valLbl.TextColor3 = TextWhite valLbl.TextSize = 12 valLbl.Font = Enum.Font.GothamBold valLbl.TextXAlignment = Enum.TextXAlignment.Left valLbl.Parent = box
+    return {Title = titleLbl, Value = valLbl}
+end
+
+local success, err = pcall(function()
+    table.insert(InfoLabels, createInfoLabel("ชื่อผู้เล่น (Username)", player.Name))
+    table.insert(InfoLabels, createInfoLabel("รหัสผู้เล่น (User ID)", tostring(player.UserId)))
+    local createdStr = "ไม่ทราบข้อมูล"
+    pcall(function() local joinDate = player.AccountAge; local d = os.date("*t", os.time() - (joinDate * 86400)); createdStr = string.format("วันที่ %d เดือน %d ปี %d (เล่นมา %d วัน)", d.day, d.month, d.year, joinDate) end)
+    table.insert(InfoLabels, createInfoLabel("สร้างบัญชีเมื่อ", createdStr))
+    local isPremium = player.MembershipType == Enum.MembershipType.Premium
+    table.insert(InfoLabels, createInfoLabel("สถานะพรีเมี่ยม", isPremium and "เป็นพรีเมี่ยม (Premium) 👑" or "ไม่ใช่พรีเมี่ยม"))
+    local placeName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+    local playersCount = #game.Players:GetPlayers()
+    local serverId = game.JobId
+    table.insert(InfoLabels, createInfoLabel("ชื่อเซิร์ฟเวอร์ (Server)", placeName .. " [" .. (serverId ~= "" and "Public" or "Private") .. "]"))
+    table.insert(InfoLabels, createInfoLabel("จำนวนผู้เล่นในเซิฟ", tostring(playersCount) .. " คน"))
+    local osInfo, ramInfo, bitInfo = "ไม่ทราบข้อมูล", "ไม่ทราบข้อมูล", "ไม่ทราบข้อมูล"
+    pcall(function()
+        osInfo = game:GetService("UserInputService").TouchEnabled and "มือถือ / แท็บเล็ต (Mobile)" or "คอมพิวเตอร์ (PC)"
+        ramInfo = string.format("%.2f MB (ใช้งานจริง)", game:GetService("Stats"):GetTotalMemoryUsageMb())
+        bitInfo = game:GetService("UserInputService").KeyboardEnabled and "64-bit (PC / Console)" or "ARM (Mobile - รองรับ 32/64 bit ตามเครื่อง)"
+    end)
+    table.insert(InfoLabels, createInfoLabel("ระบบปฏิบัติการ (OS)", osInfo))
+    table.insert(InfoLabels, createInfoLabel("หน่วยความจำ (RAM)", ramInfo))
+    table.insert(InfoLabels, createInfoLabel("สถาปัตยกรรม (Bit)", bitInfo))
+end)
+InfoScroll.CanvasSize = UDim2.new(0, 0, 0, infoLayout.AbsoluteContentSize.Y + 10)
+
+-- ==========================================
+-- ===== [ แถบ ⚙️ : ตั้งค่า ] =====
+-- ==========================================
+local SettingScroll = Instance.new("ScrollingFrame")
+SettingScroll.Size = UDim2.new(1, 0, 1, 0)
+SettingScroll.BackgroundColor3 = PanelBg
+SettingScroll.BorderSizePixel = 0
+SettingScroll.ScrollBarThickness = 2
+SettingScroll.ScrollBarImageColor3 = PrimaryColor
+SettingScroll.CanvasSize = UDim2.new(0, 0, 0, 300)
+SettingScroll.Parent = SettingPage
+local setCorner = Instance.new("UICorner") setCorner.CornerRadius = UDim.new(0, 8) setCorner.Parent = SettingScroll
+local setLayout = Instance.new("UIListLayout") setLayout.Padding = UDim.new(0, 6) setLayout.Parent = SettingScroll
+
+local TgGroupLabels = {}
+local function createTelegramGroup(title, link, imageId)
+    local box = Instance.new("Frame")
+    box.Size = UDim2.new(1, -12, 0, 65)
+    box.BackgroundColor3 = FeatureBoxBg
+    box.Parent = SettingScroll
+    local boxCorner = Instance.new("UICorner") boxCorner.CornerRadius = UDim.new(0, 6) boxCorner.Parent = box
+    local boxStroke = Instance.new("UIStroke") boxStroke.Color = Color3.fromRGB(45, 50, 60) boxStroke.Parent = box
+
+    local img = Instance.new("ImageLabel")
+    img.Size = UDim2.new(0, 45, 0, 45) img.Position = UDim2.new(0, 6, 0.5, -22.5)
+    img.BackgroundColor3 = Color3.fromRGB(15, 17, 21) img.Image = "rbxassetid://" .. imageId img.ScaleType = Enum.ScaleType.Crop img.Parent = box
+    local imgCorner = Instance.new("UICorner") imgCorner.CornerRadius = UDim.new(0, 6) imgCorner.Parent = img
+
+    local nameLbl = Instance.new("TextLabel")
+    nameLbl.Size = UDim2.new(1, -120, 0, 20) nameLbl.Position = UDim2.new(0, 58, 0, 10)
+    nameLbl.BackgroundTransparency = 1 nameLbl.Text = title nameLbl.TextColor3 = TextWhite nameLbl.TextSize = 13 nameLbl.Font = Enum.Font.GothamBold nameLbl.TextXAlignment = Enum.TextXAlignment.Left nameLbl.Parent = box
+
+    local joinBtn = Instance.new("TextButton")
+    joinBtn.Size = UDim2.new(0, 70, 0, 26) joinBtn.Position = UDim2.new(1, -78, 0.5, -13)
+    joinBtn.BackgroundColor3 = Color3.fromRGB(0, 136, 204) joinBtn.Text = "เข้าร่วม" joinBtn.TextColor3 = Color3.fromRGB(255, 255, 255) joinBtn.TextSize = 11 joinBtn.Font = Enum.Font.GothamBold joinBtn.Parent = box
+    local joinCorner = Instance.new("UICorner") joinCorner.CornerRadius = UDim.new(0, 4) joinCorner.Parent = joinBtn
+
+    table.insert(TgGroupLabels, {Btn = joinBtn, Title = nameLbl, TH = title, EN = title == "กลุ่ม Official" and "Official Group" or "Chat Group"})
+
+    joinBtn.MouseButton1Click:Connect(function()
+        pcall(function()
+            setclipboard(link)
+            game:GetService("StarterGui"):SetCore("SendNotification", { Title = "คัดลอกลิงก์แล้ว!", Text = "ลิงก์กลุ่ม: " .. title, Duration = 5 })
+        end)
+    end)
+end
+
+local SettingBtns = {}
+local function createSettingBtn(textTH, textEN, color, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -12, 0, 40) btn.BackgroundColor3 = color btn.Text = textTH btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.TextSize = 13 btn.Font = Enum.Font.GothamBold btn.Parent = SettingScroll
+    local btnCorner = Instance.new("UICorner") btnCorner.CornerRadius = UDim.new(0, 6) btnCorner.Parent = btn
+    table.insert(SettingBtns, {Btn = btn, TH = textTH, EN = textEN})
+    btn.MouseButton1Click:Connect(callback)
+end
+
+createTelegramGroup("กลุ่ม Official", "https://t.me/phanto_official", "94766389472143")
+createTelegramGroup("กลุ่มพูดคุย", "https://t.me/phan4", "109248063696059")
+
+createSettingBtn("💾 เซฟเมนู", "💾 Save Menu", Color3.fromRGB(46, 204, 113), function()
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "เซฟเมนูสำเร็จ", Text = "บันทึกการตั้งค่าแล้ว", Duration = 3})
+end)
+createSettingBtn("🗑️ ลบเซฟเมนู", "🗑️ Delete Save", Color3.fromRGB(231, 76, 60), function()
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "ลบเซฟเมนูสำเร็จ", Text = "ล้างข้อมูลการตั้งค่าแล้ว", Duration = 3})
+end)
+createSettingBtn("🔄 เปลี่ยนเซิร์ฟเวอร์", "🔄 Change Server", Color3.fromRGB(52, 152, 219), function()
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "กำลังเปลี่ยนเซิร์ฟเวอร์...", Text = "กรุณารอสักครู่", Duration = 3})
+    task.delay(1, function() pcall(function() game:GetService("TeleportService"):Teleport(game.PlaceId, player) end) end)
+end)
+
+SettingScroll.CanvasSize = UDim2.new(0, 0, 0, setLayout.AbsoluteContentSize.Y + 10)
+
+-- ===== ระบบเปลี่ยนภาษา (อัปเดตครบทุกแถบ) =====
+local finalUpdateLang = updateLanguage
+updateLanguage = function()
+    finalUpdateLang()
+    if currentLang == "TH" then
+        MapDropdownBtn.Text = "เลือก Map ▼"
+        ContactBtn.Text = "ช่องทางติดต่อ"
+        CpTitle.Text = "ช่องทางติดต่อ"
+        for _, v in ipairs(TgGroupLabels) do v.Btn.Text = "เข้าร่วม"; v.Title.Text = v.TH end
+        for _, v in ipairs(SettingBtns) do v.Btn.Text = v.TH end
+    else
+        MapDropdownBtn.Text = "Select Map ▼"
+        ContactBtn.Text = "Contact Us"
+        CpTitle.Text = "Contact Us"
+        for _, v in ipairs(TgGroupLabels) do v.Btn.Text = "Join"; v.Title.Text = v.EN end
+        for _, v in ipairs(SettingBtns) do v.Btn.Text = v.EN end
+    end
+end
