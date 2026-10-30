@@ -1,5 +1,5 @@
--- language: Lua, file: TG_Mick_v5_Part1.lua
--- ===== PART 1: UI หลัก + ตัวแปร + ฟังก์ชันฟิสิกส์ (ขนาดพอดีมือถือ) =====
+-- language: Lua, file: TG_Mick_v5_Complete.lua
+-- ===== TG_Mick_v5 Complete Script (Part 1 - Part 5) =====
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -256,8 +256,6 @@ local SideLogoStroke = Instance.new("UIStroke")
 SideLogoStroke.Color = PrimaryColor
 SideLogoStroke.Thickness = 1.5
 SideLogoStroke.Parent = SideLogo
--- language: Lua, file: TG_Mick_v5_Part2.lua
--- ===== PART 2: UI Components + Teleport Tool (ขนาดพอดีมือถือ) =====
 
 -- ===== ฟังก์ชันสร้าง Nav Button =====
 local function createNavBtn(textIcon, yPos)
@@ -641,8 +639,6 @@ DropdownBtn.MouseButton1Click:Connect(function()
     if DropdownList.Visible then updatePlayerList() end
 end)
 PanelMid.CanvasSize = UDim2.new(0, 0, 0, currentYMid + 8)
--- language: Lua, file: TG_Mick_v5_Part3.lua
--- ===== PART 3: Panel ขวา (Slider) + ระบบภาษา + Loop หลัก (ขนาดพอดีมือถือ) =====
 
 -- ===== Slider =====
 local function createSlider(parent, text, yPos, min, max, default, callback)
@@ -871,8 +867,8 @@ CloseBtn.MouseButton1Click:Connect(function()
 	isUIOpen = false
 	MainUI.Visible = false
 end)
--- language: Lua, file: TG_Mick_v5_Part4.lua
--- ===== PART 4: ESP Tab (👁️) — ภาษาไทยล้วน + UI ขนาดมือถือ =====
+
+-- ===== PART 4: ESP System =====
 
 local Drawing = (typeof(Drawing) == "table") and Drawing or nil
 local espFolder = Instance.new("Folder")
@@ -918,7 +914,6 @@ local function createESPFor(plr)
         data.Health = Drawing.new("Square")
         data.Health.Thickness = 1 data.Health.Filled = true data.Health.Visible = false
     else
-        -- fallback billboard
         local function mkBb(size)
             local bb = Instance.new("BillboardGui")
             bb.Size = size bb.AlwaysOnTop = true bb.LightInfluence = 0 bb.ResetOnSpawn = false bb.Enabled = false bb.Parent = espFolder
@@ -1050,29 +1045,6 @@ ESPPage.BackgroundTransparency = 1
 ESPPage.Visible = false
 ESPPage.Parent = PagesContainer
 
-BtnHome.MouseButton1Click:Connect(function()
-    HomePage.Visible = true
-    ESPPage.Visible = false
-    BtnHome.BackgroundColor3 = PrimaryColor
-    BtnHome.TextColor3 = Color3.fromRGB(0,0,0)
-    HomeStroke.Color = PrimaryColor
-    ESPTabBtn.BackgroundColor3 = Color3.fromRGB(30, 35, 45)
-    ESPTabBtn.TextColor3 = TextGray
-    ESPTabStroke.Color = Color3.fromRGB(50, 55, 65)
-end)
-
-ESPTabBtn.MouseButton1Click:Connect(function()
-    HomePage.Visible = false
-    ESPPage.Visible = true
-    ESPTabBtn.BackgroundColor3 = PrimaryColor
-    ESPTabBtn.TextColor3 = Color3.fromRGB(0,0,0)
-    ESPTabStroke.Color = PrimaryColor
-    BtnHome.BackgroundColor3 = Color3.fromRGB(30, 35, 45)
-    BtnHome.TextColor3 = TextGray
-    HomeStroke.Color = Color3.fromRGB(50, 55, 65)
-end)
-
--- ===== 2 Panel: ซ้าย toggle, ขวาตั้งค่า =====
 local ESPPanel1 = Instance.new("ScrollingFrame")
 ESPPanel1.Size = UDim2.new(0.5, -PAD, 1, 0)
 ESPPanel1.Position = UDim2.new(0, 0, 0, 0)
@@ -1119,7 +1091,6 @@ ESPPanel1.CanvasSize = UDim2.new(0, 0, 0, espY1 + 8)
 local SliderESPDist = createSlider(ESPPanel2, "ระยะมองสูงสุด (เมตร)", espY2, 50, 2000, 500, function(v) ESP.MaxDistance = v end)
 espY2 = espY2 + 48
 
--- สีกล่อง / สีเส้น
 local function makeColorRow(parent, labelText, getColor, setColor)
     local box = Instance.new("Frame")
     box.Size = UDim2.new(1, -12, 0, 32)
@@ -1169,46 +1140,12 @@ end)
 
 ESPPanel2.CanvasSize = UDim2.new(0, 0, 0, espY2 + 8)
 
--- ===== ผูกภาษา =====
-local baseUpdateLang = updateLanguage
-updateLanguage = function()
-    baseUpdateLang()
-    if currentLang == "TH" then
-        ESPTitle1.Text = "เปิด/ปิด"
-        ESPTitle2.Text = "ตั้งค่า"
-        ToggleESPEnabled.Text = "เปิดการมองเห็น"
-        ToggleLines.Text = "มองเส้น"
-        ToggleBoxes.Text = "มองกล่อง"
-        ToggleNames.Text = "มองชื่อ"
-        ToggleDistance.Text = "มองระยะทาง"
-        ToggleHealth.Text = "มองเลือด"
-        ToggleTeam.Text = "ซ่อนทีมเดียวกัน"
-        SliderESPDist.Text = "ระยะมองสูงสุด (เมตร)"
-        BoxColorLbl.Text = "สีกล่อง"
-        LineColorLbl.Text = "สีเส้น"
-    else
-        ESPTitle1.Text = "Toggle"
-        ESPTitle2.Text = "Settings"
-        ToggleESPEnabled.Text = "Enable ESP"
-        ToggleLines.Text = "Show Lines"
-        ToggleBoxes.Text = "Show Boxes"
-        ToggleNames.Text = "Show Names"
-        ToggleDistance.Text = "Show Distance"
-        ToggleHealth.Text = "Show Health"
-        ToggleTeam.Text = "Hide Teammates"
-        SliderESPDist.Text = "Max Distance (m)"
-        BoxColorLbl.Text = "Box Color"
-        LineColorLbl.Text = "Line Color"
-    end
-end
 -- ===== PART 5: แถบ 📄 (Map Hub) + ℹ️ (Info) + ⚙️ (Settings) =====
 
--- 1. สร้างปุ่มเมนูสำหรับ 3 แท็บใหม่
 local DocTabBtn, DocTabStroke = createNavBtn("📄", 130)
 local InfoTabBtn, InfoTabStroke = createNavBtn("ℹ️", 170)
 local SettingTabBtn, SettingTabStroke = createNavBtn("⚙️", 210)
 
--- 2. สร้าง Page สำหรับ 3 แท็บใหม่
 local DocPage = Instance.new("Frame")
 DocPage.Size = UDim2.new(1, 0, 1, 0)
 DocPage.BackgroundTransparency = 1
@@ -1227,7 +1164,7 @@ SettingPage.BackgroundTransparency = 1
 SettingPage.Visible = false
 SettingPage.Parent = PagesContainer
 
--- 3. ระบบสลับหน้า 5 แท็บ (แก้ทับของเก่า)
+-- ระบบสลับหน้า 5 แท็บ
 local function ResetAllTabs()
     local allTabs = {
         {Btn = BtnHome, Stroke = HomeStroke, Page = HomePage},
@@ -1250,9 +1187,7 @@ DocTabBtn.MouseButton1Click:Connect(function() ResetAllTabs(); DocPage.Visible =
 InfoTabBtn.MouseButton1Click:Connect(function() ResetAllTabs(); InfoPage.Visible = true; InfoTabBtn.BackgroundColor3 = PrimaryColor; InfoTabBtn.TextColor3 = Color3.fromRGB(0,0,0); InfoTabStroke.Color = PrimaryColor end)
 SettingTabBtn.MouseButton1Click:Connect(function() ResetAllTabs(); SettingPage.Visible = true; SettingTabBtn.BackgroundColor3 = PrimaryColor; SettingTabBtn.TextColor3 = Color3.fromRGB(0,0,0); SettingTabStroke.Color = PrimaryColor end)
 
--- ==========================================
 -- ===== [ แถบ 📄 : Map Hub ] =====
--- ==========================================
 local TopBar = Instance.new("Frame")
 TopBar.Size = UDim2.new(1, 0, 0, 26)
 TopBar.BackgroundTransparency = 1
@@ -1360,7 +1295,7 @@ local function AddScriptButton(title, scriptUrl, hasKey, imageId)
     end)
 end
 
-local maps = {"FPS MOVE", "Map 2", "Map 3"}
+local maps = {"FPS MOVE", "Ability Arena"}
 for _, mapName in ipairs(maps) do
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 24)
@@ -1377,6 +1312,8 @@ for _, mapName in ipairs(maps) do
         for _, c in ipairs(ScriptListPanel:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
         if mapName == "FPS MOVE" then
             AddScriptButton("TG:mick_2009", "https://pastefy.app/LqqHT4gR/raw", true, "131897810457113")
+        elseif mapName == "Ability Arena" then
+            AddScriptButton("Ability Arena", "https://pastefy.app/NWXkd5eU/raw", true, "134304687191664")
         end
         ScriptListPanel.CanvasSize = UDim2.new(0, 0, 0, slpLayout.AbsoluteContentSize.Y)
     end)
@@ -1415,13 +1352,11 @@ CpCloseBtn.MouseButton1Click:Connect(function() ContactPopup.Visible = false end
 TgBtn.MouseButton1Click:Connect(function()
     pcall(function()
         setclipboard("https://t.me/mick_2009")
-        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "คัดลอกลิงก์แล้ว!", Text = "นำไปวางในเบราว์เซอร์", Duration = 5})
+        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "คัดลอกลิงก์แล้ว!", Text = "นำไปวางในเบราว์เซอร์เพื่อเข้าห้อง Telegram", Duration = 5})
     end)
 end)
 
--- ==========================================
 -- ===== [ แถบ ℹ️ : ข้อมูลผู้เล่น ] =====
--- ==========================================
 local InfoScroll = Instance.new("ScrollingFrame")
 InfoScroll.Size = UDim2.new(1, 0, 1, 0)
 InfoScroll.BackgroundColor3 = PanelBg
@@ -1452,7 +1387,7 @@ local function createInfoLabel(titleText, valueText)
     return {Title = titleLbl, Value = valLbl}
 end
 
-local success, err = pcall(function()
+pcall(function()
     table.insert(InfoLabels, createInfoLabel("ชื่อผู้เล่น (Username)", player.Name))
     table.insert(InfoLabels, createInfoLabel("รหัสผู้เล่น (User ID)", tostring(player.UserId)))
     local createdStr = "ไม่ทราบข้อมูล"
@@ -1477,9 +1412,7 @@ local success, err = pcall(function()
 end)
 InfoScroll.CanvasSize = UDim2.new(0, 0, 0, infoLayout.AbsoluteContentSize.Y + 10)
 
--- ==========================================
 -- ===== [ แถบ ⚙️ : ตั้งค่า ] =====
--- ==========================================
 local SettingScroll = Instance.new("ScrollingFrame")
 SettingScroll.Size = UDim2.new(1, 0, 1, 0)
 SettingScroll.BackgroundColor3 = PanelBg
@@ -1549,17 +1482,41 @@ end)
 
 SettingScroll.CanvasSize = UDim2.new(0, 0, 0, setLayout.AbsoluteContentSize.Y + 10)
 
--- ===== ระบบเปลี่ยนภาษา (อัปเดตครบทุกแถบ) =====
-local finalUpdateLang = updateLanguage
+-- ===== ระบบเปลี่ยนภาษา (อัปเดตครอบคลุม) =====
+local baseUpdateLang = updateLanguage
 updateLanguage = function()
-    finalUpdateLang()
+    baseUpdateLang()
     if currentLang == "TH" then
+        ESPTitle1.Text = "เปิด/ปิด"
+        ESPTitle2.Text = "ตั้งค่า"
+        ToggleESPEnabled.Text = "เปิดการมองเห็น"
+        ToggleLines.Text = "มองเส้น"
+        ToggleBoxes.Text = "มองกล่อง"
+        ToggleNames.Text = "มองชื่อ"
+        ToggleDistance.Text = "มองระยะทาง"
+        ToggleHealth.Text = "มองเลือด"
+        ToggleTeam.Text = "ซ่อนทีมเดียวกัน"
+        SliderESPDist.Text = "ระยะมองสูงสุด (เมตร)"
+        BoxColorLbl.Text = "สีกล่อง"
+        LineColorLbl.Text = "สีเส้น"
         MapDropdownBtn.Text = "เลือก Map ▼"
         ContactBtn.Text = "ช่องทางติดต่อ"
         CpTitle.Text = "ช่องทางติดต่อ"
         for _, v in ipairs(TgGroupLabels) do v.Btn.Text = "เข้าร่วม"; v.Title.Text = v.TH end
         for _, v in ipairs(SettingBtns) do v.Btn.Text = v.TH end
     else
+        ESPTitle1.Text = "Toggle"
+        ESPTitle2.Text = "Settings"
+        ToggleESPEnabled.Text = "Enable ESP"
+        ToggleLines.Text = "Show Lines"
+        ToggleBoxes.Text = "Show Boxes"
+        ToggleNames.Text = "Show Names"
+        ToggleDistance.Text = "Show Distance"
+        ToggleHealth.Text = "Show Health"
+        ToggleTeam.Text = "Hide Teammates"
+        SliderESPDist.Text = "Max Distance (m)"
+        BoxColorLbl.Text = "Box Color"
+        LineColorLbl.Text = "Line Color"
         MapDropdownBtn.Text = "Select Map ▼"
         ContactBtn.Text = "Contact Us"
         CpTitle.Text = "Contact Us"
@@ -1567,3 +1524,5 @@ updateLanguage = function()
         for _, v in ipairs(SettingBtns) do v.Btn.Text = v.EN end
     end
 end
+
+updateLanguage()
