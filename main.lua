@@ -1,5 +1,5 @@
--- language: Lua, file: TG_Mick_v5_Complete.lua
--- ===== TG_Mick_v5 Complete Script (Part 1 - Part 5) =====
+-- language: Lua, file: TG_Mick_v5_Ultimate_Combo.lua
+-- ===== TG_Mick_v5 Ultimate Combo (Part 1/9) =====
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -21,7 +21,7 @@ local UI_WIDTH = 420
 local UI_HEIGHT = 300
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "TG_Mick_UI"
+ScreenGui.Name = "TG_Mick_Ultimate_UI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.IgnoreGuiInset = true
@@ -31,7 +31,9 @@ if not ScreenGui.Parent then ScreenGui.Parent = player:WaitForChild("PlayerGui")
 -- ===== ตัวแปรสถานะ =====
 local isUIOpen = false
 local isLocked = false
-local currentLang = "TH"
+local iPadMode = false
+local NORMAL_UI_SIZE = Vector2.new(UI_WIDTH, UI_HEIGHT)
+local IPAD_UI_SIZE = Vector2.new(680, 460)
 
 local WalkSpeedEnabled = false
 local JumpPowerEnabled = false
@@ -140,7 +142,8 @@ local function toggleFly(state)
             flyBV.Parent = hrp
             flyBG = Instance.new("BodyGyro")
             flyBG.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
-            flyBG.P = 1000 flyBG.D = 50
+            flyBG.P = 1000
+            flyBG.D = 50
             flyBG.Parent = hrp
         end
     else
@@ -175,6 +178,8 @@ RunService.RenderStepped:Connect(function()
         if hum and hum.PlatformStand and not FlyEnabled then hum.PlatformStand = false end
     end
 end)
+-- ===== TG_Mick_v5 Ultimate Combo (Part 2/9) =====
+-- (ต่อจาก Part 1)
 
 -- ===== ไอคอนลอย =====
 local FloatingLogo = Instance.new("ImageButton")
@@ -306,13 +311,25 @@ HeaderTitle.Font = Enum.Font.GothamBold
 HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
 HeaderTitle.Parent = Header
 
-local LangToggleBtn = Instance.new("TextButton")
-LangToggleBtn.Size = UDim2.new(0, 26, 0, 18)
-LangToggleBtn.Position = UDim2.new(1, -64, 0.5, -9)
-LangToggleBtn.BackgroundTransparency = 1
-LangToggleBtn.Text = "🇹🇭"
-LangToggleBtn.TextSize = 14
-LangToggleBtn.Parent = Header
+-- ===== ปุ่มสลับโหมด iPad =====
+local IPadBtn = Instance.new("TextButton")
+IPadBtn.Name = "IPadModeButton"
+IPadBtn.Size = UDim2.new(0, 58, 0, 20)
+IPadBtn.Position = UDim2.new(1, -92, 0.5, -10)
+IPadBtn.BackgroundColor3 = Color3.fromRGB(30, 35, 45)
+IPadBtn.Text = "จอใหญ่"
+IPadBtn.TextColor3 = TextWhite
+IPadBtn.TextSize = 10
+IPadBtn.Font = Enum.Font.GothamBold
+IPadBtn.AutoButtonColor = true
+IPadBtn.Parent = Header
+local IPadBtnCorner = Instance.new("UICorner")
+IPadBtnCorner.CornerRadius = UDim.new(0, 5)
+IPadBtnCorner.Parent = IPadBtn
+local IPadBtnStroke = Instance.new("UIStroke")
+IPadBtnStroke.Color = PrimaryColor
+IPadBtnStroke.Thickness = 1
+IPadBtnStroke.Parent = IPadBtn
 
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 24, 0, 24)
@@ -339,6 +356,8 @@ HomePage.Size = UDim2.new(1, 0, 1, 0)
 HomePage.BackgroundTransparency = 1
 HomePage.Visible = true
 HomePage.Parent = PagesContainer
+-- ===== TG_Mick_v5 Ultimate Combo (Part 3/9) =====
+-- (ต่อจาก Part 2)
 
 -- ===== Panel (3 คอลัมน์) =====
 local PAD = 4
@@ -362,7 +381,7 @@ local PanelLeft = makePanel(0, 0)
 local PanelMid = makePanel(0.33, 2)
 local PanelRight = makePanel(0.66, 4)
 
--- ===== Header =====
+-- ===== Header ของ Panel =====
 local function createHeader(parent, text)
 	local lbl = Instance.new("TextLabel")
 	lbl.Size = UDim2.new(1, -12, 0, 20)
@@ -523,82 +542,10 @@ TeleportBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-local CreateToolBtn = Instance.new("TextButton")
-CreateToolBtn.Size = UDim2.new(1, -12, 0, 26)
-CreateToolBtn.Position = UDim2.new(0, 6, 0, currentYMid)
-CreateToolBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
-CreateToolBtn.Text = "สร้างไอเทมวาร์ป"
-CreateToolBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreateToolBtn.TextSize = 11
-CreateToolBtn.Font = Enum.Font.GothamBold
-CreateToolBtn.Parent = PanelMid
-local ctCorner = Instance.new("UICorner")
-ctCorner.CornerRadius = UDim.new(0, 5)
-ctCorner.Parent = CreateToolBtn
-currentYMid = currentYMid + 32
-
-local RemoveToolBtn = Instance.new("TextButton")
-RemoveToolBtn.Size = UDim2.new(1, -12, 0, 26)
-RemoveToolBtn.Position = UDim2.new(0, 6, 0, currentYMid)
-RemoveToolBtn.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
-RemoveToolBtn.Text = "ลบไอเทมวาร์ป"
-RemoveToolBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-RemoveToolBtn.TextSize = 11
-RemoveToolBtn.Font = Enum.Font.GothamBold
-RemoveToolBtn.Parent = PanelMid
-local rtCorner = Instance.new("UICorner")
-rtCorner.CornerRadius = UDim.new(0, 5)
-rtCorner.Parent = RemoveToolBtn
-currentYMid = currentYMid + 32
-
--- ===== Teleport Tool =====
-local teleportTool, toolConn, clickConn = nil, nil, nil
-local function createTeleportTool()
-    if teleportTool then return end
-    local backpack = player:FindFirstChild("Backpack")
-    if not backpack then return end
-    teleportTool = Instance.new("Tool")
-    teleportTool.Name = "ไอเทมวาร์ป"
-    teleportTool.RequiresHandle = false
-    teleportTool.CanBeDropped = false
-    teleportTool.Parent = backpack
-
-    toolConn = teleportTool.Equipped:Connect(function()
-        clickConn = UserInputService.InputEnded:Connect(function(input, gpe)
-            if gpe then return end
-            if input.UserInputType == Enum.UserInputType.Touch then
-                local char = player.Character
-                local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                local hum = char and char:FindFirstChildOfClass("Humanoid")
-                local cam = workspace.CurrentCamera
-                if hrp and hum and hum.MoveDirection.Magnitude == 0 then
-                    local ray = cam:ScreenPointToRay(input.Position.X, input.Position.Y)
-                    local params = RaycastParams.new()
-                    params.FilterType = Enum.RaycastFilterType.Exclude
-                    params.FilterDescendantsInstances = {char}
-                    local result = workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
-                    if result then hrp.CFrame = CFrame.new(result.Position + Vector3.new(0, 3, 0)) end
-                end
-            end
-        end)
-    end)
-
-    teleportTool.Unequipped:Connect(function()
-        if clickConn then clickConn:Disconnect() clickConn = nil end
-    end)
-end
-local function removeTeleportTool()
-    if teleportTool then teleportTool:Destroy() teleportTool = nil end
-    if toolConn then toolConn:Disconnect() toolConn = nil end
-    if clickConn then clickConn:Disconnect() clickConn = nil end
-end
-CreateToolBtn.MouseButton1Click:Connect(createTeleportTool)
-RemoveToolBtn.MouseButton1Click:Connect(removeTeleportTool)
-
 -- ===== Dropdown Player List =====
 local DropdownList = Instance.new("ScrollingFrame")
 DropdownList.Size = UDim2.new(1, -12, 0, 120)
-DropdownList.Position = UDim2.new(0, 6, 0, currentYMid - 180)
+DropdownList.Position = UDim2.new(0, 6, 0, currentYMid - 120)
 DropdownList.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
 DropdownList.BorderSizePixel = 1
 DropdownList.BorderColor3 = PrimaryColor
@@ -741,58 +688,8 @@ currentYRight = currentYRight + 48
 local SliderFlyUpDownText = createSlider(PanelRight, "ความเร็วขึ้น-ลง", currentYRight, 10, 100, 50, function(v) FlyUpDownSpeed = v end)
 currentYRight = currentYRight + 48
 PanelRight.CanvasSize = UDim2.new(0, 0, 0, currentYRight + 8)
-
--- ===== อัปเดตภาษา =====
-local function updateLanguage()
-	if currentLang == "TH" then
-		LangToggleBtn.Text = "🇹🇭"
-		TitleLeft.Text = "ฟิสิกส์"
-		TitleMid.Text = "ติดตาม/วาร์ป"
-		TitleRight.Text = "ตั้งค่า"
-		ToggleWalkText.Text = "วิ่งเร็ว"
-		ToggleJumpText.Text = "กระโดดสูง"
-		ToggleFlyText.Text = "บิน"
-		ToggleInfJumpText.Text = "กระโดดไม่จำกัด"
-		ToggleNoclipText.Text = "ทะลุกำแพง"
-		ToggleAirWalkText.Text = "ยืนกลางอากาศ"
-		ToggleFollowText.Text = "บินตามผู้เล่น"
-		DropdownBtn.Text = "เลือกผู้เล่น ▼"
-		TargetDisplay.Text = selectedPlayer and ("เป้าหมาย: " .. selectedPlayer.Name) or "เป้าหมาย: ไม่มี"
-		TeleportBtn.Text = "วาร์ปไปหาเป้าหมาย"
-		CreateToolBtn.Text = "สร้างไอเทมวาร์ป"
-		RemoveToolBtn.Text = "ลบไอเทมวาร์ป"
-		SliderSpeedText.Text = "ความเร็วเดิน"
-		SliderJumpText.Text = "พลังกระโดด"
-		SliderFlyText.Text = "ความเร็วบิน"
-		SliderFlyUpDownText.Text = "ความเร็วขึ้น-ลง"
-	else
-		LangToggleBtn.Text = "🇬🇧"
-		TitleLeft.Text = "Physics"
-		TitleMid.Text = "Follow / Warp"
-		TitleRight.Text = "Settings"
-		ToggleWalkText.Text = "Speed"
-		ToggleJumpText.Text = "Jump"
-		ToggleFlyText.Text = "Fly"
-		ToggleInfJumpText.Text = "Infinite Jump"
-		ToggleNoclipText.Text = "Noclip"
-		ToggleAirWalkText.Text = "Air Stand"
-		ToggleFollowText.Text = "Follow Player"
-		DropdownBtn.Text = "Select Player ▼"
-		TargetDisplay.Text = selectedPlayer and ("Target: " .. selectedPlayer.Name) or "Target: None"
-		TeleportBtn.Text = "Teleport to Target"
-		CreateToolBtn.Text = "Create Warp Tool"
-		RemoveToolBtn.Text = "Remove Warp Tool"
-		SliderSpeedText.Text = "Walk Speed"
-		SliderJumpText.Text = "Jump Power"
-		SliderFlyText.Text = "Fly Speed"
-		SliderFlyUpDownText.Text = "Fly Up/Down"
-	end
-end
-
-LangToggleBtn.MouseButton1Click:Connect(function()
-	if currentLang == "TH" then currentLang = "EN" else currentLang = "TH" end
-	updateLanguage()
-end)
+-- ===== TG_Mick_v5 Ultimate Combo (Part 4/9) =====
+-- (ต่อจาก Part 3)
 
 -- ===== Speed/Jump Loop =====
 RunService.Heartbeat:Connect(function()
@@ -868,8 +765,35 @@ CloseBtn.MouseButton1Click:Connect(function()
 	MainUI.Visible = false
 end)
 
--- ===== PART 4: ESP System =====
+-- ===== สลับโหมด iPad / ปกติ =====
+local function setIPadMode(enabled)
+	iPadMode = enabled
 
+	local camera = workspace.CurrentCamera
+	local viewport = camera and camera.ViewportSize or Vector2.new(800, 600)
+	local targetSize = enabled and IPAD_UI_SIZE or NORMAL_UI_SIZE
+
+	local maxWidth = math.max(280, viewport.X * 0.94)
+	local maxHeight = math.max(220, viewport.Y * 0.88)
+	local finalWidth = math.min(targetSize.X, maxWidth)
+	local finalHeight = math.min(targetSize.Y, maxHeight)
+
+	MainUI.Size = UDim2.new(0, finalWidth, 0, finalHeight)
+	MainUI.Position = UDim2.new(0.5, 0, 0.5, 0)
+	MainUI.AnchorPoint = Vector2.new(0.5, 0.5)
+
+	IPadBtn.Text = enabled and "จอเล็ก" or "จอใหญ่"
+	IPadBtn.BackgroundColor3 = enabled and PrimaryColor or Color3.fromRGB(30, 35, 45)
+	IPadBtn.TextColor3 = enabled and Color3.fromRGB(0, 0, 0) or TextWhite
+end
+
+IPadBtn.MouseButton1Click:Connect(function()
+	setIPadMode(not iPadMode)
+end)
+-- ===== TG_Mick_v5 Ultimate Combo (Part 5/9) =====
+-- (ต่อจาก Part 4)
+
+-- ===== PART 4: ESP System =====
 local Drawing = (typeof(Drawing) == "table") and Drawing or nil
 local espFolder = Instance.new("Folder")
 espFolder.Name = "TG_ESP_Folder"
@@ -900,26 +824,54 @@ local function createESPFor(plr)
     local data = { Player = plr }
     if Drawing and Drawing.new then
         data.Line = Drawing.new("Line")
-        data.Line.Thickness = 1.2 data.Line.Color = ESP.LineColor data.Line.Transparency = 1 data.Line.Visible = false
+        data.Line.Thickness = 1.2 
+        data.Line.Color = ESP.LineColor 
+        data.Line.Transparency = 1 
+        data.Line.Visible = false
 
         data.Box = Drawing.new("Square")
-        data.Box.Thickness = 1.2 data.Box.Color = ESP.BoxColor data.Box.Filled = false data.Box.Transparency = 1 data.Box.Visible = false
+        data.Box.Thickness = 1.2 
+        data.Box.Color = ESP.BoxColor 
+        data.Box.Filled = false 
+        data.Box.Transparency = 1 
+        data.Box.Visible = false
 
         data.Name = Drawing.new("Text")
-        data.Name.Size = 12 data.Name.Center = true data.Name.Outline = true data.Name.Color = ESP.TextColor data.Name.Font = 2 data.Name.Visible = false
+        data.Name.Size = 12 
+        data.Name.Center = true 
+        data.Name.Outline = true 
+        data.Name.Color = ESP.TextColor 
+        data.Name.Font = 2 
+        data.Name.Visible = false
 
         data.Distance = Drawing.new("Text")
-        data.Distance.Size = 11 data.Distance.Center = true data.Distance.Outline = true data.Distance.Color = Color3.fromRGB(255, 200, 0) data.Distance.Visible = false
+        data.Distance.Size = 11 
+        data.Distance.Center = true 
+        data.Distance.Outline = true 
+        data.Distance.Color = Color3.fromRGB(255, 200, 0) 
+        data.Distance.Visible = false
 
         data.Health = Drawing.new("Square")
-        data.Health.Thickness = 1 data.Health.Filled = true data.Health.Visible = false
+        data.Health.Thickness = 1 
+        data.Health.Filled = true 
+        data.Health.Visible = false
     else
         local function mkBb(size)
             local bb = Instance.new("BillboardGui")
-            bb.Size = size bb.AlwaysOnTop = true bb.LightInfluence = 0 bb.ResetOnSpawn = false bb.Enabled = false bb.Parent = espFolder
+            bb.Size = size 
+            bb.AlwaysOnTop = true 
+            bb.LightInfluence = 0 
+            bb.ResetOnSpawn = false 
+            bb.Enabled = false 
+            bb.Parent = espFolder
             local lbl = Instance.new("TextLabel")
-            lbl.Size = UDim2.new(1,0,1,0) lbl.BackgroundTransparency = 1 lbl.TextColor3 = Color3.new(1,1,1)
-            lbl.TextStrokeTransparency = 0 lbl.TextSize = 12 lbl.Font = Enum.Font.GothamBold lbl.Parent = bb
+            lbl.Size = UDim2.new(1,0,1,0) 
+            lbl.BackgroundTransparency = 1 
+            lbl.TextColor3 = Color3.new(1,1,1)
+            lbl.TextStrokeTransparency = 0 
+            lbl.TextSize = 12 
+            lbl.Font = Enum.Font.GothamBold 
+            lbl.Parent = bb
             return bb, lbl
         end
         local bb, lbl = mkBb(UDim2.new(0, 150, 0, 20)); data.Name = { Billboard = bb, Label = lbl }
@@ -1036,7 +988,7 @@ RunService.RenderStepped:Connect(function()
     if ESP.Enabled then updateESP() end
 end)
 
--- ===== Tab 👁️ =====
+-- ===== Tab 👁️ (UI ESP) =====
 local ESPTabBtn, ESPTabStroke = createNavBtn("👁️", 90)
 
 local ESPPage = Instance.new("Frame")
@@ -1139,9 +1091,10 @@ local LineColorLbl = makeColorRow(ESPPanel2, "สีเส้น", function() re
 end)
 
 ESPPanel2.CanvasSize = UDim2.new(0, 0, 0, espY2 + 8)
+-- ===== TG_Mick_v5 Ultimate Combo (Part 6/9 - Map Hub Final) =====
+-- (ต่อจาก Part 5)
 
 -- ===== PART 5: แถบ 📄 (Map Hub) + ℹ️ (Info) + ⚙️ (Settings) =====
-
 local DocTabBtn, DocTabStroke = createNavBtn("📄", 130)
 local InfoTabBtn, InfoTabStroke = createNavBtn("ℹ️", 170)
 local SettingTabBtn, SettingTabStroke = createNavBtn("⚙️", 210)
@@ -1215,7 +1168,7 @@ ContactBtn.Parent = TopBar
 local contactCorner = Instance.new("UICorner") contactCorner.CornerRadius = UDim.new(0, 5) contactCorner.Parent = ContactBtn
 
 local MapList = Instance.new("ScrollingFrame")
-MapList.Size = UDim2.new(0.5, -4, 0, 80)
+MapList.Size = UDim2.new(0.5, -4, 0, 120)
 MapList.Position = UDim2.new(0, 0, 0, 28)
 MapList.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
 MapList.BorderSizePixel = 1
@@ -1229,18 +1182,18 @@ local mapListLayout = Instance.new("UIListLayout") mapListLayout.Parent = MapLis
 local ScriptListPanel = Instance.new("ScrollingFrame")
 ScriptListPanel.Size = UDim2.new(1, 0, 1, -32)
 ScriptListPanel.Position = UDim2.new(0, 0, 0, 32)
-ScriptListPanel.BackgroundColor3 = PanelBg
+ScriptListPanel.BackgroundTransparency = 1
 ScriptListPanel.BorderSizePixel = 0
 ScriptListPanel.ScrollBarThickness = 2
 ScriptListPanel.ScrollBarImageColor3 = PrimaryColor
 ScriptListPanel.CanvasSize = UDim2.new(0, 0, 0, 0)
 ScriptListPanel.Parent = DocPage
-local slpCorner = Instance.new("UICorner") slpCorner.CornerRadius = UDim.new(0, 8) slpCorner.Parent = ScriptListPanel
-local slpLayout = Instance.new("UIListLayout") slpLayout.Padding = UDim.new(0, 4) slpLayout.Parent = ScriptListPanel
+local slpLayout = Instance.new("UIListLayout") slpLayout.Padding = UDim.new(0, 6) slpLayout.Parent = ScriptListPanel
 
-local function AddScriptButton(title, scriptUrl, hasKey, imageId)
+-- ฟังก์ชันสร้างการ์ดสคริปต์ (คลิกการ์ดเพื่อโหลดสคริปต์ทันที)
+local function renderScriptCard(titleText, creditText, scriptUrl, imageId, hasKey)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -12, 0, 50)
+    btn.Size = UDim2.new(1, -12, 0, 60)
     btn.BackgroundColor3 = FeatureBoxBg
     btn.Text = ""
     btn.Parent = ScriptListPanel
@@ -1248,8 +1201,8 @@ local function AddScriptButton(title, scriptUrl, hasKey, imageId)
     local btnStroke = Instance.new("UIStroke") btnStroke.Color = Color3.fromRGB(45, 50, 60) btnStroke.Parent = btn
 
     local img = Instance.new("ImageLabel")
-    img.Size = UDim2.new(0, 36, 0, 36)
-    img.Position = UDim2.new(0, 6, 0.5, -18)
+    img.Size = UDim2.new(0, 45, 0, 45)
+    img.Position = UDim2.new(0, 8, 0.5, -22.5)
     img.BackgroundColor3 = Color3.fromRGB(15, 17, 21)
     if imageId and imageId ~= "" then img.Image = "rbxassetid://" .. imageId end
     img.ScaleType = Enum.ScaleType.Crop
@@ -1257,48 +1210,84 @@ local function AddScriptButton(title, scriptUrl, hasKey, imageId)
     local imgCorner = Instance.new("UICorner") imgCorner.CornerRadius = UDim.new(0, 4) imgCorner.Parent = img
 
     local nameLbl = Instance.new("TextLabel")
-    nameLbl.Size = UDim2.new(0.6, 0, 0, 18)
-    nameLbl.Position = UDim2.new(0, 50, 0, 8)
+    nameLbl.Size = UDim2.new(0.5, 0, 0, 20)
+    nameLbl.Position = UDim2.new(0, 60, 0, 10)
     nameLbl.BackgroundTransparency = 1
-    nameLbl.Text = title
+    nameLbl.Text = titleText
     nameLbl.TextColor3 = TextWhite
-    nameLbl.TextSize = 12
+    nameLbl.TextSize = 13
     nameLbl.Font = Enum.Font.GothamBold
     nameLbl.TextXAlignment = Enum.TextXAlignment.Left
     nameLbl.Parent = btn
 
     local creditLbl = Instance.new("TextLabel")
-    creditLbl.Size = UDim2.new(0.6, 0, 0, 14)
-    creditLbl.Position = UDim2.new(0, 50, 0, 26)
+    creditLbl.Size = UDim2.new(0.5, 0, 0, 14)
+    creditLbl.Position = UDim2.new(0, 60, 0, 32)
     creditLbl.BackgroundTransparency = 1
-    creditLbl.Text = "by:mick_2009"
+    creditLbl.Text = creditText
     creditLbl.TextColor3 = Color3.fromRGB(150, 150, 150)
     creditLbl.TextSize = 10
     creditLbl.Font = Enum.Font.Gotham
     creditLbl.TextXAlignment = Enum.TextXAlignment.Left
     creditLbl.Parent = btn
 
+    -- ป้ายสถานะคีย์: ไม่มีคีย์=เขียว, มีคีย์=แดง
     local statusLbl = Instance.new("TextLabel")
-    statusLbl.Size = UDim2.new(0, 60, 0, 20)
-    statusLbl.Position = UDim2.new(1, -68, 0.5, -10)
-    statusLbl.BackgroundColor3 = hasKey and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(46, 204, 113)
-    statusLbl.Text = hasKey and "มีคีย์" or "ไม่มีคีย์"
+    statusLbl.Size = UDim2.new(0, 65, 0, 28)
+    statusLbl.Position = UDim2.new(1, -75, 0.5, -14)
+    if hasKey then
+        statusLbl.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+        statusLbl.Text = "มีคีย์"
+    else
+        statusLbl.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+        statusLbl.Text = "ไม่มีคีย์"
+    end
     statusLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-    statusLbl.TextSize = 10
+    statusLbl.TextSize = 11
     statusLbl.Font = Enum.Font.GothamBold
     statusLbl.Parent = btn
     local statusCorner = Instance.new("UICorner") statusCorner.CornerRadius = UDim.new(0, 4) statusCorner.Parent = statusLbl
 
     btn.MouseButton1Click:Connect(function()
-        game:GetService("StarterGui"):SetCore("SendNotification", { Title = "กำลังโหลด...", Text = "ดึงข้อมูล: " .. title, Duration = 3 })
+        game:GetService("StarterGui"):SetCore("SendNotification", { Title = "กำลังโหลด...", Text = "ดึงข้อมูล: " .. titleText, Duration = 3 })
         pcall(function() loadstring(game:HttpGet(scriptUrl))() end)
     end)
 end
 
-local maps = {"FPS MOVE", "Ability Arena"}
-for _, mapName in ipairs(maps) do
+-- ฐานข้อมูลสคริปต์
+local mapDatabase = {
+    ["Monster Hunter"] = {
+        {name = "Monster Hunter", credit = "by:TG:mick_2009", url = "https://pastefy.app/BBZJqV3Q/raw", image = "106291676248397", hasKey = false}
+    },
+    ["FPS MOVE"] = {
+        {name = "FPS MOVE", credit = "by:TG:mick_2009", url = "https://pastefy.app/V2LUWyP5/raw", image = "131897810457113", hasKey = true}
+    },
+    ["Ability Arena"] = {
+        {name = "Ability Arena", credit = "by:TG:mick_2009", url = "https://pastefy.app/HCmmUj6q/raw", image = "134304687191664", hasKey = true}
+    }
+}
+
+local function loadMapData(mapName)
+    MapDropdownBtn.Text = mapName .. " ▼"
+    MapList.Visible = false
+
+    for _, child in ipairs(ScriptListPanel:GetChildren()) do
+        if child:IsA("TextButton") then child:Destroy() end
+    end
+
+    if mapDatabase[mapName] then
+        for _, data in ipairs(mapDatabase[mapName]) do
+            renderScriptCard(data.name, data.credit, data.url, data.image, data.hasKey)
+        end
+    end
+
+    task.wait()
+    ScriptListPanel.CanvasSize = UDim2.new(0, 0, 0, slpLayout.AbsoluteContentSize.Y + 10)
+end
+
+for mapName, _ in pairs(mapDatabase) do
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, 0, 0, 24)
+    btn.Size = UDim2.new(1, 0, 0, 30)
     btn.BackgroundColor3 = Color3.fromRGB(28, 32, 42)
     btn.Text = mapName
     btn.TextColor3 = TextWhite
@@ -1307,20 +1296,13 @@ for _, mapName in ipairs(maps) do
     btn.Parent = MapList
 
     btn.MouseButton1Click:Connect(function()
-        MapDropdownBtn.Text = mapName .. " ▼"
-        MapList.Visible = false
-        for _, c in ipairs(ScriptListPanel:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
-        if mapName == "FPS MOVE" then
-            AddScriptButton("TG:mick_2009", "https://pastefy.app/LqqHT4gR/raw", true, "131897810457113")
-        elseif mapName == "Ability Arena" then
-            AddScriptButton("Ability Arena", "https://pastefy.app/NWXkd5eU/raw", true, "134304687191664")
-        end
-        ScriptListPanel.CanvasSize = UDim2.new(0, 0, 0, slpLayout.AbsoluteContentSize.Y)
+        loadMapData(mapName)
     end)
 end
 MapList.CanvasSize = UDim2.new(0, 0, 0, mapListLayout.AbsoluteContentSize.Y)
-
 MapDropdownBtn.MouseButton1Click:Connect(function() MapList.Visible = not MapList.Visible end)
+
+loadMapData("Monster Hunter")
 
 -- Contact Popup
 local ContactPopup = Instance.new("Frame")
@@ -1355,6 +1337,8 @@ TgBtn.MouseButton1Click:Connect(function()
         game:GetService("StarterGui"):SetCore("SendNotification", {Title = "คัดลอกลิงก์แล้ว!", Text = "นำไปวางในเบราว์เซอร์เพื่อเข้าห้อง Telegram", Duration = 5})
     end)
 end)
+-- ===== TG_Mick_v5 Ultimate Combo (Part 7/9) =====
+-- (ต่อจาก Part 6)
 
 -- ===== [ แถบ ℹ️ : ข้อมูลผู้เล่น ] =====
 local InfoScroll = Instance.new("ScrollingFrame")
@@ -1424,7 +1408,6 @@ SettingScroll.Parent = SettingPage
 local setCorner = Instance.new("UICorner") setCorner.CornerRadius = UDim.new(0, 8) setCorner.Parent = SettingScroll
 local setLayout = Instance.new("UIListLayout") setLayout.Padding = UDim.new(0, 6) setLayout.Parent = SettingScroll
 
-local TgGroupLabels = {}
 local function createTelegramGroup(title, link, imageId)
     local box = Instance.new("Frame")
     box.Size = UDim2.new(1, -12, 0, 65)
@@ -1447,8 +1430,6 @@ local function createTelegramGroup(title, link, imageId)
     joinBtn.BackgroundColor3 = Color3.fromRGB(0, 136, 204) joinBtn.Text = "เข้าร่วม" joinBtn.TextColor3 = Color3.fromRGB(255, 255, 255) joinBtn.TextSize = 11 joinBtn.Font = Enum.Font.GothamBold joinBtn.Parent = box
     local joinCorner = Instance.new("UICorner") joinCorner.CornerRadius = UDim.new(0, 4) joinCorner.Parent = joinBtn
 
-    table.insert(TgGroupLabels, {Btn = joinBtn, Title = nameLbl, TH = title, EN = title == "กลุ่ม Official" and "Official Group" or "Chat Group"})
-
     joinBtn.MouseButton1Click:Connect(function()
         pcall(function()
             setclipboard(link)
@@ -1457,72 +1438,121 @@ local function createTelegramGroup(title, link, imageId)
     end)
 end
 
-local SettingBtns = {}
-local function createSettingBtn(textTH, textEN, color, callback)
+local function createSettingBtn(text, color, callback)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -12, 0, 40) btn.BackgroundColor3 = color btn.Text = textTH btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.TextSize = 13 btn.Font = Enum.Font.GothamBold btn.Parent = SettingScroll
+    btn.Size = UDim2.new(1, -12, 0, 40) btn.BackgroundColor3 = color btn.Text = text btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.TextSize = 13 btn.Font = Enum.Font.GothamBold btn.Parent = SettingScroll
     local btnCorner = Instance.new("UICorner") btnCorner.CornerRadius = UDim.new(0, 6) btnCorner.Parent = btn
-    table.insert(SettingBtns, {Btn = btn, TH = textTH, EN = textEN})
     btn.MouseButton1Click:Connect(callback)
 end
 
 createTelegramGroup("กลุ่ม Official", "https://t.me/phanto_official", "94766389472143")
 createTelegramGroup("กลุ่มพูดคุย", "https://t.me/phan4", "109248063696059")
 
-createSettingBtn("💾 เซฟเมนู", "💾 Save Menu", Color3.fromRGB(46, 204, 113), function()
+createSettingBtn("💾 เซฟเมนู", Color3.fromRGB(46, 204, 113), function()
     game:GetService("StarterGui"):SetCore("SendNotification", {Title = "เซฟเมนูสำเร็จ", Text = "บันทึกการตั้งค่าแล้ว", Duration = 3})
 end)
-createSettingBtn("🗑️ ลบเซฟเมนู", "🗑️ Delete Save", Color3.fromRGB(231, 76, 60), function()
+createSettingBtn("🗑️ ลบเซฟเมนู", Color3.fromRGB(231, 76, 60), function()
     game:GetService("StarterGui"):SetCore("SendNotification", {Title = "ลบเซฟเมนูสำเร็จ", Text = "ล้างข้อมูลการตั้งค่าแล้ว", Duration = 3})
 end)
-createSettingBtn("🔄 เปลี่ยนเซิร์ฟเวอร์", "🔄 Change Server", Color3.fromRGB(52, 152, 219), function()
+createSettingBtn("🔄 เปลี่ยนเซิร์ฟเวอร์", Color3.fromRGB(52, 152, 219), function()
     game:GetService("StarterGui"):SetCore("SendNotification", {Title = "กำลังเปลี่ยนเซิร์ฟเวอร์...", Text = "กรุณารอสักครู่", Duration = 3})
     task.delay(1, function() pcall(function() game:GetService("TeleportService"):Teleport(game.PlaceId, player) end) end)
 end)
 
 SettingScroll.CanvasSize = UDim2.new(0, 0, 0, setLayout.AbsoluteContentSize.Y + 10)
+-- ===== TG_Mick_v5 Ultimate Combo (Part 8/9) =====
+-- (ต่อจาก Part 7)
 
--- ===== ระบบเปลี่ยนภาษา (อัปเดตครอบคลุม) =====
-local baseUpdateLang = updateLanguage
-updateLanguage = function()
-    baseUpdateLang()
-    if currentLang == "TH" then
-        ESPTitle1.Text = "เปิด/ปิด"
-        ESPTitle2.Text = "ตั้งค่า"
-        ToggleESPEnabled.Text = "เปิดการมองเห็น"
-        ToggleLines.Text = "มองเส้น"
-        ToggleBoxes.Text = "มองกล่อง"
-        ToggleNames.Text = "มองชื่อ"
-        ToggleDistance.Text = "มองระยะทาง"
-        ToggleHealth.Text = "มองเลือด"
-        ToggleTeam.Text = "ซ่อนทีมเดียวกัน"
-        SliderESPDist.Text = "ระยะมองสูงสุด (เมตร)"
-        BoxColorLbl.Text = "สีกล่อง"
-        LineColorLbl.Text = "สีเส้น"
-        MapDropdownBtn.Text = "เลือก Map ▼"
-        ContactBtn.Text = "ช่องทางติดต่อ"
-        CpTitle.Text = "ช่องทางติดต่อ"
-        for _, v in ipairs(TgGroupLabels) do v.Btn.Text = "เข้าร่วม"; v.Title.Text = v.TH end
-        for _, v in ipairs(SettingBtns) do v.Btn.Text = v.TH end
-    else
-        ESPTitle1.Text = "Toggle"
-        ESPTitle2.Text = "Settings"
-        ToggleESPEnabled.Text = "Enable ESP"
-        ToggleLines.Text = "Show Lines"
-        ToggleBoxes.Text = "Show Boxes"
-        ToggleNames.Text = "Show Names"
-        ToggleDistance.Text = "Show Distance"
-        ToggleHealth.Text = "Show Health"
-        ToggleTeam.Text = "Hide Teammates"
-        SliderESPDist.Text = "Max Distance (m)"
-        BoxColorLbl.Text = "Box Color"
-        LineColorLbl.Text = "Line Color"
-        MapDropdownBtn.Text = "Select Map ▼"
-        ContactBtn.Text = "Contact Us"
-        CpTitle.Text = "Contact Us"
-        for _, v in ipairs(TgGroupLabels) do v.Btn.Text = "Join"; v.Title.Text = v.EN end
-        for _, v in ipairs(SettingBtns) do v.Btn.Text = v.EN end
+-- ===== ระบบ Auto-Farm (เพิ่มเข้าไปในเมนูหลัก) =====
+local AutoClickEnabled = false
+local AutoRebirthEnabled = false
+local AutoAbilityEnabled = false
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ClickEvent, AttackEvent, RebirthEvent, SpecialEvent
+pcall(function()
+    ClickEvent   = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Click")
+    AttackEvent  = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("AttackEnemy")
+    RebirthEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Rebirth")
+    SpecialEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("SpecialAttack")
+end)
+
+local function getEnemyIds()
+    local ids = {}
+    local folder = workspace:FindFirstChild("ClientEnemies")
+    if not folder then return ids end
+    for _, obj in ipairs(folder:GetChildren()) do
+        local num = tonumber(string.match(obj.Name, "^Enemy_(%d+)$"))
+        if num then
+            table.insert(ids, num)
+        end
     end
+    return ids
 end
 
-updateLanguage()
+-- ระบบ Auto-Click
+task.spawn(function()
+    while true do
+        task.wait(0.08)
+        if AutoClickEnabled and ClickEvent then
+            pcall(function() ClickEvent:FireServer() end)
+        end
+    end
+end)
+
+-- ระบบ Auto-Ability
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+        if AutoAbilityEnabled and SpecialEvent then
+            local ids = getEnemyIds()
+            if #ids > 0 then
+                pcall(function() SpecialEvent:InvokeServer(ids[1], ids) end)
+            end
+        end
+    end
+end)
+
+-- ระบบ Auto-Rebirth
+task.spawn(function()
+    while true do
+        task.wait(1)
+        if AutoRebirthEnabled and RebirthEvent then
+            local pg = player:FindFirstChild("PlayerGui")
+            local hud = pg and pg:FindFirstChild("HUD")
+            local sideMenu = hud and hud:FindFirstChild("SideMenu")
+            local tiles = sideMenu and sideMenu:FindFirstChild("Tiles")
+            local rebirthBtn = tiles and tiles:FindFirstChild("RebirthButton")
+            local percent = rebirthBtn and rebirthBtn:FindFirstChild("Percent")
+
+            if percent and percent.Text == "100%" then
+                pcall(function() RebirthEvent:InvokeServer() end)
+                task.wait(2)
+            end
+        end
+    end
+end)
+
+-- เพิ่มปุ่มควบคุม Auto-Farm ลงใน PanelLeft
+createToggle(PanelLeft, "ออโต้ฟาร์ม (คลิก)", currentYLeft, function(s) AutoClickEnabled = s end)
+currentYLeft = currentYLeft + 36
+createToggle(PanelLeft, "ออโต้สกิล", currentYLeft, function(s) AutoAbilityEnabled = s end)
+currentYLeft = currentYLeft + 36
+createToggle(PanelLeft, "ออโต้รีเบอส", currentYLeft, function(s) AutoRebirthEnabled = s end)
+currentYLeft = currentYLeft + 36
+
+PanelLeft.CanvasSize = UDim2.new(0, 0, 0, currentYLeft + 8)
+-- ===== TG_Mick_v5 Ultimate Combo (Part 9/9) =====
+-- (ต่อจาก Part 8)
+
+-- ===== ปิดท้ายสคริปต์ =====
+pcall(function()
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "โหลดเมนูสำเร็จ!",
+        Text = "TG:mick_2009 Ultimate Combo พร้อมใช้งาน",
+        Duration = 5
+    })
+end)
+
+print("[TG Hub] โหลด TG_Mick_v5 Ultimate Combo สำเร็จ!")
+print("[TG Hub] ระบบทั้งหมด: ฟิสิกส์, ESP, Map Hub, Auto-Farm ทำงานพร้อมกัน")
